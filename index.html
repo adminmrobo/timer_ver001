@@ -4,79 +4,73 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>하루 표정 타이머</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-/* VOICE: 밝고 장난스러운 연구실 조수 하루가 시간을 지켜 주는 도구
-   IDEA: 16비트 RPG 대화창 — 하루의 초상 + 픽셀 숫자 계기판
-   PICTURE: 크게 보이는 하루 얼굴(30초마다 교체)과 픽셀 카운트다운
-   COLOUR and TYPE: 흰 바탕, 하루의 분홍 #e85d9a, 남색 #24306b, 라벤더 #b9a6e8 / Press Start 2P + Noto Sans KR
-   LAYOUT: 상단 작은 제목, 초상+시계 한 상자, 아래 조작부, 맨 아래 made by */
+/* VOICE: 시간이 줄어들수록 하루가 점점 당황하는 장난스러운 타이머
+   IDEA: 비상 전원 계기판 — 배터리 잔량이 남은 시간 비율만큼 꺼져 간다
+   PICTURE: 하루 초상 + 검은 계기판(7세그먼트 숫자, 칸으로 나뉜 배터리)
+   COLOUR and TYPE: 흰 바탕, 남색 테두리, 계기판은 검정 바탕에 주황→빨강 / Noto Sans KR + Press Start 2P
+   LAYOUT: 제목, 초상(좌)+계기판(우, 넓게), 조작부, made by */
 :root{color-scheme:light dark;
  --bg:light-dark(#ffffff,#141626);--ink:light-dark(#1b1f3b,#eef0ff);
  --pink:#e85d9a;--navy:light-dark(#24306b,#9fb0ff);--lav:light-dark(#efe9fd,#272a45);
- --line:light-dark(#24306b,#6f7bd0);--mut:light-dark(#5a5f80,#a8acc8);--card:light-dark(#fbfaff,#1c1f35)}
+ --line:light-dark(#24306b,#6f7bd0);--mut:light-dark(#5a5f80,#a8acc8);
+ --amber:#ff9d1c;--org:#ff6a00;--red:#ff2a2a;--lit:var(--amber)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Sans KR",system-ui,sans-serif;overflow-x:clip}
-.wrap{max-width:1040px;margin:0 auto;padding:clamp(18px,3vw,40px) max(4vw,14px) 28px}
-h1{font-size:clamp(24px,3.4vw,34px);line-height:1.1;margin:0 0 4px;font-weight:900}
-.sub{color:var(--mut);margin:0 0 18px;font-size:15px}
-.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);border:4px solid var(--line);box-shadow:8px 8px 0 var(--line);background:var(--card);image-rendering:pixelated}
-.port{position:relative;background:#e9e9ee;border-right:4px solid var(--line);aspect-ratio:1/1;display:grid;place-items:center;overflow:hidden}
+.wrap{max-width:1240px;margin:0 auto;padding:clamp(18px,3vw,40px) max(4vw,14px) 28px}
+h1{font-size:clamp(24px,3.4vw,34px);line-height:1.1;margin:0 0 18px;font-weight:900}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.1fr);border:4px solid var(--line);box-shadow:8px 8px 0 var(--line);background:#0b0b0d}
+.port{background:#cdcdcd;border-right:4px solid var(--line);min-height:340px;display:grid;place-items:center;overflow:hidden;align-self:stretch}
 .port img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;transition:opacity .25s steps(3),transform .25s steps(3)}
 .port img.swap{opacity:0;transform:scale(.96)}
-.tag{position:absolute;left:10px;bottom:10px;background:var(--pink);color:#fff;font-weight:700;font-size:15px;padding:4px 10px;border:3px solid #24306b}
-.panel{display:flex;flex-direction:column;justify-content:center;gap:16px;padding:clamp(16px,3vw,32px)}
-.mode{display:flex;gap:0;border:3px solid var(--line);width:max-content}
-.mode button{border:0;background:transparent;color:var(--ink);font:700 15px "Noto Sans KR";padding:8px 14px;min-height:40px;cursor:pointer}
-.mode button[aria-pressed=true]{background:var(--navy);color:var(--bg)}
-.clock{font-family:"Press Start 2P",monospace;font-size:clamp(34px,7vw,74px);line-height:1;letter-spacing:2px;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums}
-.clock.done{color:var(--pink);animation:blink 1s steps(2) infinite}
-@keyframes blink{50%{opacity:.35}}
-.bar{height:16px;border:3px solid var(--line);background:var(--lav);position:relative}
-.bar i{position:absolute;inset:0 auto 0 0;background:var(--pink);width:0}
-.next{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:var(--mut)}
-.next b{color:var(--ink)}
-.say{border:3px solid var(--line);background:var(--bg);padding:10px 14px;font-size:16px;min-height:52px}
+.meter{--lit:var(--amber);display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,2vw,22px);padding:clamp(16px,2.6vw,30px);color:var(--lit)}
+.meter.w1{--lit:var(--org)}.meter.w2{--lit:var(--red)}
+.hz{height:14px;background:repeating-linear-gradient(-45deg,var(--lit) 0 12px,#0b0b0d 12px 24px);opacity:.9}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font:700 15px "Noto Sans KR";color:var(--lit)}
+.row b{font:400 clamp(16px,2vw,22px) "Press Start 2P",monospace}
+.seg{display:block;width:100%;overflow:hidden;height:clamp(120px,15vw,210px)}
+.seg .on{fill:var(--lit);filter:drop-shadow(0 0 6px var(--lit))}
+.seg .off{fill:var(--lit);opacity:.09}
+.cells{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:4px;height:clamp(54px,7vw,84px);padding:6px;border:3px solid var(--lit)}
+.cells i{background:var(--lit);opacity:.1}
+.cells i.on{opacity:1;box-shadow:0 0 8px var(--lit)}
+.meter.w2 .cells i.on{animation:blink .8s steps(2) infinite}
+.meter.end .seg .on{animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.3}}
 .ctrl{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
 .btn{font:700 16px "Noto Sans KR";min-height:46px;padding:0 18px;border:3px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;box-shadow:4px 4px 0 var(--line)}
 .btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--line)}
 .btn.main{background:var(--pink);color:#fff;min-width:120px}
-.btn:focus-visible,.mode button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+.btn:focus-visible,input:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
 .pre{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;align-items:center}
 .pre .btn{min-height:44px;font-size:15px;padding:0 12px;box-shadow:3px 3px 0 var(--line)}
 .pre .btn[aria-pressed=true]{background:var(--lav)}
 label{font-size:15px;color:var(--mut);display:inline-flex;align-items:center;gap:6px}
-input,select{font:16px "Noto Sans KR";min-height:44px;border:3px solid var(--line);background:var(--bg);color:var(--ink);padding:0 8px}
+input{font:16px "Noto Sans KR";min-height:44px;border:3px solid var(--line);background:var(--bg);color:var(--ink);padding:0 8px}
 input[type=number]{width:84px}
 .opts{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px}
 footer{margin-top:30px;padding-top:14px;border-top:3px dashed var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:14px;color:var(--mut)}
 footer .by{font-family:"Press Start 2P",monospace;font-size:11px;color:var(--ink)}
 footer a{color:var(--navy)}
-.stage:fullscreen{display:grid;align-content:center;border:0;box-shadow:none;height:100vh}
-@media(max-width:700px){.stage{grid-template-columns:1fr}.port{border-right:0;border-bottom:4px solid var(--line);max-height:62vh;aspect-ratio:auto;height:min(92vw,62vh)}}
-@media(prefers-reduced-motion:reduce){.port img{transition:none}.clock.done{animation:none}}
+.stage:fullscreen{height:100vh;border:0;box-shadow:none;align-content:center}
+@media(max-width:760px){.stage{grid-template-columns:1fr}.port{border-right:0;border-bottom:4px solid var(--line);aspect-ratio:auto;height:min(88vw,56vh)}.cells{grid-template-columns:repeat(10,minmax(0,1fr));height:auto;grid-auto-rows:28px}}
+@media(prefers-reduced-motion:reduce){.port img{transition:none}.meter .cells i.on,.meter.end .seg .on{animation:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
  <h1>하루 표정 타이머</h1>
- <p class="sub">30초마다 연구실 조수 하루의 표정이 바뀝니다.</p>
 
  <section class="stage" id="stage">
-  <div class="port"><img id="face" src="img/E13_neutral.png" alt="하루 표정: 기본(중립)"><span class="tag" id="tag">기본(중립)</span></div>
-  <div class="panel">
-   <div class="mode" role="group" aria-label="모드">
-    <button id="mTimer" aria-pressed="true">타이머</button>
-    <button id="mWatch" aria-pressed="false">스톱워치</button>
-   </div>
-   <div class="clock" id="clock" aria-live="off">05:00</div>
-   <div>
-    <div class="bar" aria-hidden="true"><i id="bar"></i></div>
-    <div class="next"><span>다음 표정까지 <b id="nx">30</b>초</span><span>바뀐 횟수 <b id="cnt">0</b></span></div>
-   </div>
-   <div class="say" id="say">시작 버튼을 누르면 하루가 시간을 지켜 줄게요!</div>
+  <div class="port"><img id="face" src="img/E01_joy.png" alt="하루"></div>
+  <div class="meter" id="meter">
+   <div class="hz" aria-hidden="true"></div>
+   <div class="row"><span>남은 시간</span><span>잔량 <b id="pct">100%</b></span></div>
+   <svg class="seg" id="seg" role="img" aria-label="남은 시간"></svg>
+   <div class="cells" id="cells" aria-hidden="true"></div>
+   <div class="hz" aria-hidden="true"></div>
   </div>
  </section>
 
@@ -91,7 +85,6 @@ footer a{color:var(--navy)}
 
  <div class="opts">
   <label>직접 입력 <input type="number" id="mins" min="0" max="999" value="5"> 분 <input type="number" id="secs" min="0" max="59" value="0"> 초</label>
-  <label>표정 순서 <select id="order"><option value="seq">차례대로</option><option value="rand">무작위</option></select></label>
   <label><input type="checkbox" id="sound" checked style="min-height:auto;width:20px;height:20px"> 종료 알림음</label>
  </div>
 
@@ -103,52 +96,74 @@ footer a{color:var(--navy)}
 
 <script>
 {
-const F=[["기쁨","E01_joy"],["슬픔","E02_sadness"],["분노","E03_anger"],["놀람","E04_surprise"],["두려움","E05_fear"],["혐오","E06_disgust"],["설명","E07_explaining"],["안내","E08_guiding"],["생각","E09_thinking"],["확인","E10_confirming"],["사과","E11_apologizing"],["응원","E12_cheering"],["기본(중립)","E13_neutral"],["머쓱함","E14_sheepish"],["당황","E15_flustered"],["뿌듯함","E16_proud"],["졸림","E17_sleepy"],["삐짐","E18_sulking"],["반짝눈","E19_sparkle_eyes"],["식은땀","E20_sweat_drop"],["울먹(폭포 눈물)","E21_waterfall_tears"],["뿔남","E22_puffed_angry"],["멍(점 눈)","E23_blank_dot_eyes"],["충격","E24_shock"],["데헷","E25_teehee"],["데헷 (수줍게)","E25_teehee_shy"],["데헷 (장난스럽게)","E25_teehee_playful"],["흥 (볼 빵빵)","E26_hmph"],["흥 (돌아서 걷기)","E26_hmph_walkaway"]];
-const LINES={"기쁨":"좋아요, 순조롭게 가고 있어요!","슬픔":"시간이 흘러가는 게 조금 아쉽네요…","분노":"집중! 딴짓은 금지예요!","놀람":"벌써 이만큼 지났어요?","두려움":"마감이 다가오는 기분이에요…","혐오":"미루기는 싫어요, 계속 가요.","설명":"남은 시간을 잘 나눠 써 봐요.","안내":"다음 단계로 넘어갈 때예요.","생각":"음… 지금 하는 일, 잘 되고 있나요?","확인":"진행 상황 확인 완료!","사과":"재촉해서 미안해요, 그래도 화이팅!","응원":"할 수 있어요, 끝까지!","기본(중립)":"하루가 시간을 지켜보고 있어요.","머쓱함":"제가 잠깐 딴생각했어요, 헤헤.","당황":"앗, 시간이 이렇게 빨리?!","뿌듯함":"여기까지 온 것만으로도 훌륭해요!","졸림":"졸리면 물 한 잔 마셔요…","삐짐":"저 좀 봐 줘요, 30초마다 바뀌는데!","반짝눈":"끝나면 멋진 결과가 기다려요!","식은땀":"조금 서둘러야 할지도…","울먹(폭포 눈물)":"시간아 천천히 가 줘…","뿔남":"집중력 다시 충전!","멍(점 눈)":"……(멍)","충격":"헉!","데헷":"데헷, 잘하고 있어요!","데헷 (수줍게)":"옆에서 조용히 응원할게요.","데헷 (장난스럽게)":"이번 30초도 무사 통과!","흥 (볼 빵빵)":"흥, 쉬는 건 끝나고 해요!","흥 (돌아서 걷기)":"저는 잠깐 다녀올게요, 계속 해요!"};
+// 표정 29장 전부 — 여유(앞) → 당황(뒤) 순서
+const ORDER=["E01_joy","E19_sparkle_eyes","E12_cheering","E16_proud","E25_teehee","E25_teehee_playful","E25_teehee_shy","E13_neutral","E07_explaining","E08_guiding","E10_confirming","E09_thinking","E17_sleepy","E23_blank_dot_eyes","E14_sheepish","E18_sulking","E26_hmph","E26_hmph_walkaway","E06_disgust","E02_sadness","E11_apologizing","E04_surprise","E20_sweat_drop","E05_fear","E22_puffed_angry","E03_anger","E21_waterfall_tears","E15_flustered","E24_shock"];
+const N=ORDER.length,STEP=30000,PRESETS=[1,3,5,10,15,25,30,50,60];
 const $=id=>document.getElementById(id);
-const face=$("face"),tag=$("tag"),clock=$("clock"),bar=$("bar"),nx=$("nx"),cnt=$("cnt"),say=$("say"),go=$("go");
-const STEP=30000,PRESETS=[1,3,5,10,15,25,30,50,60];
-// 미리 불러오기
-F.forEach(f=>{const i=new Image();i.src="img/"+f[1]+".png"});
-let mode="timer",total=300000,elapsed=0,startAt=0,running=false,raf=0,idx=12,changes=0,lastStep=0,done=false,actx=null;
-try{const s=JSON.parse(localStorage.getItem("haruTimer")||"{}");if(s.total>=0)total=s.total;if(s.order)$("order").value=s.order;if(s.sound===false)$("sound").checked=false}catch(e){}
-const save=()=>{try{localStorage.setItem("haruTimer",JSON.stringify({total,order:$("order").value,sound:$("sound").checked}))}catch(e){}};
+const face=$("face"),seg=$("seg"),cellsEl=$("cells"),meter=$("meter"),pct=$("pct"),go=$("go");
+ORDER.forEach(f=>{const i=new Image();i.src="img/"+f+".png"});
+cellsEl.innerHTML="<i></i>".repeat(20);
+const cells=[...cellsEl.children];
+
+// 7세그먼트 숫자
+const H=y=>`10,${y} 15,${y-5} 45,${y-5} 50,${y} 45,${y+5} 15,${y+5}`;
+const V=(x,a,b)=>`${x},${a} ${x+5},${a+5} ${x+5},${b-5} ${x},${b} ${x-5},${b-5} ${x-5},${a+5}`;
+const SEG={a:H(7),b:V(53,10,49),c:V(53,51,90),d:H(93),e:V(7,51,90),f:V(7,10,49),g:H(50)};
+const MAP=["abcdef","bc","abdeg","abcdg","bcfg","acdfg","acdefg","abc","abcdefg","abcdfg"];
+const digit=(d,x,s)=>`<g transform="translate(${x},${s<1?40:0}) scale(${s}) skewX(-6)">`+Object.keys(SEG).map(k=>`<polygon points="${SEG[k]}" class="${MAP[d].includes(k)?"on":"off"}"/>`).join("")+"</g>";
+const colon=x=>`<g transform="translate(${x},0)"><rect x="0" y="26" width="10" height="10" class="on"/><rect x="0" y="64" width="10" height="10" class="on"/></g>`;
+function drawClock(ms){
+ const cs=Math.max(0,Math.ceil(ms/10)),m=Math.floor(cs/6000),s=Math.floor(cs/100)%60,c=cs%100;
+ const mm=String(m).padStart(2,"0").split("").map(Number);
+ let x=0,out="";
+ mm.forEach(d=>{out+=digit(d,x,1);x+=80});out+=colon(x-4);x+=24;
+ [Math.floor(s/10),s%10].forEach(d=>{out+=digit(d,x,1);x+=80});out+=colon(x-4);x+=24;
+ [Math.floor(c/10),c%10].forEach(d=>{out+=digit(d,x,.6);x+=48});
+ seg.setAttribute("viewBox",`-12 -4 ${x+14} 108`);seg.innerHTML=out;
+}
+
+let total=300000,elapsed=0,startAt=0,running=false,raf=0,cur=-1,lastStep=0,done=false,actx=null;
+try{const s=JSON.parse(localStorage.getItem("haruTimer2")||"{}");if(s.total>=0)total=s.total;if(s.sound===false)$("sound").checked=false}catch(e){}
+const save=()=>{try{localStorage.setItem("haruTimer2",JSON.stringify({total,sound:$("sound").checked}))}catch(e){}};
 $("pre").innerHTML='<span style="font-size:15px;color:var(--mut)">빠른 설정</span>'+PRESETS.map(m=>`<button class="btn" data-m="${m}" aria-pressed="false">${m}분</button>`).join("");
-const fmt=(ms,fl)=>{const t=Math.max(0,fl?Math.floor(ms/1000):Math.ceil(ms/1000)),h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,p=n=>String(n).padStart(2,"0");return h?`${h}:${p(m)}:${p(s)}`:`${p(m)}:${p(s)}`};
-const show=(i,line)=>{idx=i;const f=F[i];face.classList.add("swap");setTimeout(()=>{face.src="img/"+f[1]+".png";face.alt="하루 표정: "+f[0];tag.textContent=f[0];face.classList.remove("swap")},120);say.textContent=line||LINES[f[0]]||""};
-const nextFace=()=>{let i;if($("order").value==="rand"){do{i=Math.floor(Math.random()*F.length)}while(i===idx&&F.length>1)}else i=(idx+1)%F.length;changes++;cnt.textContent=changes;show(i)};
-const fi=n=>F.findIndex(f=>f[0]===n);
+
+function show(i){if(i===cur)return;cur=i;face.classList.add("swap");setTimeout(()=>{face.src="img/"+ORDER[i]+".png";face.classList.remove("swap")},120)}
+// 30초마다: 지나간 시간 비율(=1-남은 시간 비율)로 표정 위치를 정한다.
+// 같은 자리가 이어지면 바로 다음 표정과 번갈아 보여 30초마다 반드시 바뀌게 한다. 마지막(충격)은 종료 때.
+function faceForStep(e){
+ const used=Math.min(1,e/Math.max(total,1)),base=Math.min(N-2,Math.floor(used*(N-1)));
+ if(base!==cur)return base;
+ return base+1<=N-2?base+1:Math.max(0,base-1);
+}
 const now=()=>elapsed+(running?performance.now()-startAt:0);
 const syncPre=()=>document.querySelectorAll("#pre .btn").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.m*60000===total)));
 const syncInputs=()=>{$("mins").value=Math.floor(total/60000);$("secs").value=Math.floor(total%60000/1000)};
 function render(){
- const e=now();
- clock.textContent=mode==="timer"?fmt(total-e):fmt(e,1);
- const into=e%STEP;bar.style.width=(into/STEP*100)+"%";nx.textContent=Math.ceil((STEP-into)/1000)||30;
- const st=Math.floor(e/STEP);if(running&&st>lastStep){lastStep=st;nextFace()}
- if(mode==="timer"&&running&&e>=total)finish();
- document.title=(running?(mode==="timer"?fmt(total-e):fmt(e,1))+" · ":"")+"하루 표정 타이머";
+ const e=now(),left=Math.max(0,total-e),r=total>0?left/total:0;
+ drawClock(left);
+ pct.textContent=Math.ceil(r*100)+"%";
+ const lit=Math.ceil(r*20);cells.forEach((c,i)=>c.classList.toggle("on",i<lit));
+ meter.classList.toggle("w1",r<=.5&&r>.2);meter.classList.toggle("w2",r<=.2);
+ const st=Math.floor(e/STEP);if(running&&st>lastStep){lastStep=st;show(faceForStep(e))}
+ if(running&&e>=total)finish();
+ document.title=(running?Math.ceil(r*100)+"% · ":"")+"하루 표정 타이머";
 }
 function loop(){render();if(running)raf=requestAnimationFrame(loop)}
-function beep(){if(!$("sound").checked||!actx)return;try{[0,0.35,0.7].forEach(t=>{const o=actx.createOscillator(),g=actx.createGain();o.type="square";o.frequency.value=t===0.7?1046:784;g.gain.setValueAtTime(.12,actx.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+t+.3);o.connect(g).connect(actx.destination);o.start(actx.currentTime+t);o.stop(actx.currentTime+t+.3)})}catch(e){}}
-function finish(){elapsed=total;running=false;cancelAnimationFrame(raf);done=true;clock.classList.add("done");go.textContent="시작";show(fi("응원"),"끝! 수고했어요, 정말 잘했어요!");setTimeout(()=>{if(done)show(fi("뿌듯함"),"시간 완료! 다시 하려면 초기화를 눌러요.")},4000);beep();render();clock.textContent="00:00"}
+function beep(){if(!$("sound").checked||!actx)return;try{[0,.35,.7].forEach(t=>{const o=actx.createOscillator(),g=actx.createGain();o.type="square";o.frequency.value=t===.7?1046:784;g.gain.setValueAtTime(.12,actx.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+t+.3);o.connect(g).connect(actx.destination);o.start(actx.currentTime+t);o.stop(actx.currentTime+t+.3)})}catch(e){}}
+function finish(){elapsed=total;running=false;cancelAnimationFrame(raf);done=true;meter.classList.add("end");go.textContent="시작";show(N-1);beep();render()}
 function start(){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}
- if(done)reset();if(mode==="timer"&&total<=0){say.textContent="시간을 먼저 정해 주세요.";return}
- running=true;startAt=performance.now();go.textContent="일시정지";if(changes===0&&elapsed===0)show(fi("응원"),"시작! 30초마다 표정을 바꿔 볼게요.");loop()}
-function pause(){elapsed=now();running=false;cancelAnimationFrame(raf);go.textContent="계속";show(fi("졸림"),"잠깐 쉬는 중… 계속 버튼을 눌러요.");render()}
-function reset(){running=false;cancelAnimationFrame(raf);elapsed=0;lastStep=0;changes=0;cnt.textContent=0;done=false;clock.classList.remove("done");go.textContent="시작";show(12,"준비 완료! 시작 버튼을 눌러요.");render()}
+ if(done)reset();if(total<=0)return;running=true;startAt=performance.now();go.textContent="일시정지";loop()}
+function pause(){elapsed=now();running=false;cancelAnimationFrame(raf);go.textContent="계속";render()}
+function reset(){running=false;cancelAnimationFrame(raf);elapsed=0;lastStep=0;done=false;meter.classList.remove("end");go.textContent="시작";show(0);render()}
 function setTotal(ms){total=Math.max(0,Math.min(ms,999*60000+59000));syncInputs();syncPre();save();if(!running)reset();else render()}
 go.onclick=()=>running?pause():start();
 $("reset").onclick=reset;
-$("plus").onclick=()=>{if(mode==="timer"){if(done){done=false;clock.classList.remove("done")}total+=60000;syncInputs();syncPre();save();render()}};
-$("pre").onclick=e=>{const b=e.target.closest("[data-m]");if(b){if(mode!=="timer")setMode("timer");setTotal(+b.dataset.m*60000)}};
+$("plus").onclick=()=>{if(done){done=false;meter.classList.remove("end");elapsed=total}total+=60000;syncInputs();syncPre();save();render()};
+$("pre").onclick=e=>{const b=e.target.closest("[data-m]");if(b)setTotal(+b.dataset.m*60000)};
 const fromInputs=()=>setTotal(((+$("mins").value||0)*60+Math.min(59,+$("secs").value||0))*1000);
-$("mins").onchange=fromInputs;$("secs").onchange=fromInputs;
-$("order").onchange=save;$("sound").onchange=save;
-function setMode(m){mode=m;$("mTimer").setAttribute("aria-pressed",String(m==="timer"));$("mWatch").setAttribute("aria-pressed",String(m==="watch"));["plus","mins","secs"].forEach(id=>$(id).disabled=m!=="timer");reset()}
-$("mTimer").onclick=()=>setMode("timer");$("mWatch").onclick=()=>setMode("watch");
-$("full").onclick=()=>{try{const s=$("stage");if(document.fullscreenElement)document.exitFullscreen();else s.requestFullscreen().catch(()=>{})}catch(e){}};
-document.addEventListener("keydown",e=>{if(e.target.matches("input,select"))return;if(e.code==="Space"){e.preventDefault();go.click()}else if(e.key==="r"||e.key==="R")reset()});
+$("mins").onchange=fromInputs;$("secs").onchange=fromInputs;$("sound").onchange=save;
+$("full").onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else $("stage").requestFullscreen().catch(()=>{})}catch(e){}};
+document.addEventListener("keydown",e=>{if(e.target.matches("input"))return;if(e.code==="Space"){e.preventDefault();go.click()}else if(e.key==="r"||e.key==="R")reset()});
 document.addEventListener("visibilitychange",()=>{if(running&&!document.hidden)loop()});
 setInterval(()=>{if(running&&document.hidden)render()},1000);
 syncInputs();syncPre();reset();
