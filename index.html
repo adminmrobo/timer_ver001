@@ -10,7 +10,7 @@
    IDEA: 비상 전원 계기판 — 배터리 잔량이 남은 시간 비율만큼 꺼져 간다
    PICTURE: 하루 초상 + 검은 계기판(7세그먼트 숫자, 칸으로 나뉜 배터리)
    COLOUR and TYPE: 흰 바탕, 남색 테두리, 계기판은 검정 바탕에 주황→빨강 / Noto Sans KR + Press Start 2P
-   LAYOUT: 제목, 초상(좌)+계기판(우, 넓게), 조작부, made by */
+   LAYOUT: 제목, 초상(좌)+계기판(우, 넓게), 조작부, 라이선스 하단 */
 :root{color-scheme:light dark;
  --bg:light-dark(#ffffff,#141626);--ink:light-dark(#1b1f3b,#eef0ff);
  --pink:#e85d9a;--navy:light-dark(#24306b,#9fb0ff);--lav:light-dark(#efe9fd,#272a45);
@@ -49,17 +49,16 @@ h1{font-size:clamp(24px,3.4vw,34px);line-height:1.1;margin:0 0 18px;font-weight:
 .lic a{color:var(--navy)}
 .cc{display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border:2px solid var(--ink);border-radius:4px;font:700 12px/1.4 system-ui,sans-serif;color:var(--ink)!important;text-decoration:none;vertical-align:1px;margin-right:6px}
 .cc span{background:var(--ink);color:var(--bg);border-radius:2px;padding:0 4px}
-.lic .by{font-family:"Press Start 2P",monospace;font-size:11px;color:var(--ink);margin:10px 0 4px}
 .ctrl{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
 .btn{font:700 16px "Noto Sans KR";min-height:46px;padding:0 18px;border:3px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;box-shadow:4px 4px 0 var(--line)}
 .btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--line)}
 .btn.main{background:var(--pink);color:#fff;min-width:120px}
-.btn:focus-visible,input:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
 .pre{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;align-items:center}
 .pre .btn{min-height:44px;font-size:15px;padding:0 12px;box-shadow:3px 3px 0 var(--line)}
 .pre .btn[aria-pressed=true]{background:var(--lav)}
 label{font-size:15px;color:var(--mut);display:inline-flex;align-items:center;gap:6px}
-input{font:16px "Noto Sans KR";min-height:44px;border:3px solid var(--line);background:var(--bg);color:var(--ink);padding:0 8px}
+input,select{font:16px "Noto Sans KR";min-height:44px;border:3px solid var(--line);background:var(--bg);color:var(--ink);padding:0 8px}
 input[type=number]{width:84px}
 .opts{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px}
 .stage:fullscreen{height:100vh;border:0;box-shadow:none;align-content:center}
@@ -98,13 +97,21 @@ input[type=number]{width:84px}
 
  <div class="opts">
   <label>직접 입력 <input type="number" id="mins" min="0" max="999" value="5"> 분 <input type="number" id="secs" min="0" max="59" value="0"> 초</label>
-  <label><input type="checkbox" id="sound" checked style="min-height:auto;width:20px;height:20px"> 종료 알림음</label>
+  <label>종료 알림음 <select id="sound">
+   <option value="fanfare">픽셀 팡파레</option>
+   <option value="levelup">레벨 업</option>
+   <option value="chime">학교 차임벨</option>
+   <option value="bell">탁상 벨</option>
+   <option value="alarm">삐삐 알람</option>
+   <option value="siren">경보 사이렌</option>
+   <option value="off">끄기</option>
+  </select></label>
+  <button class="btn" id="hear" type="button">미리 듣기</button>
  </div>
 
  <footer class="lic">
   <p><a class="cc" href="https://creativecommons.org/licenses/by-nc/4.0/deed.ko"><span>cc</span>BY-NC</a>이 저작물은 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.ko">크리에이티브 커먼즈 저작자표시-비영리 4.0 국제 라이선스(CC BY-NC 4.0)</a>로 공개합니다. 비상업적 목적에 한해 자유롭게 공유하고 고쳐 쓸 수 있으며, 출처는 반드시 표기해야 합니다. 출처 표기 예: 안상선, 「Reon Ahn's page」, <a href="https://ahnboat.xyz/">ahnboat.xyz</a>.</p>
   <p>Reon Ahn's Page © 2022 Reon Ahn. All rights reserved.</p>
-  <p class="by">made by ahn sang sun</p>
   <p>캐릭터 그림: <a href="https://adminmrobo.github.io/fruitfly-lab-expressions/">초파리 연구실 표정 라이브러리</a> · 단축키 Space 시작/정지, R 초기화</p>
  </footer>
 </div>
@@ -140,8 +147,8 @@ function drawClock(ms){
 }
 
 let total=300000,elapsed=0,startAt=0,running=false,raf=0,cur=-1,lastStep=0,done=false,actx=null;
-try{const s=JSON.parse(localStorage.getItem("haruTimer2")||"{}");if(s.total>=0)total=s.total;if(s.sound===false)$("sound").checked=false;if(CH[s.who])who=s.who}catch(e){}
-const save=()=>{try{localStorage.setItem("haruTimer2",JSON.stringify({total,sound:$("sound").checked,who}))}catch(e){}};
+try{const s=JSON.parse(localStorage.getItem("haruTimer2")||"{}");if(s.total>=0)total=s.total;if(s.sound&&typeof s.sound==="string")$("sound").value=s.sound;if(CH[s.who])who=s.who}catch(e){}
+const save=()=>{try{localStorage.setItem("haruTimer2",JSON.stringify({total,sound:$("sound").value,who}))}catch(e){}};
 $("pre").innerHTML='<span style="font-size:15px;color:var(--mut)">빠른 설정</span>'+PRESETS.map(m=>`<button class="btn" data-m="${m}" aria-pressed="false">${m}분</button>`).join("");
 
 function show(i){if(i===cur)return;cur=i;face.classList.add("swap");setTimeout(()=>{face.src=`img/${who}/${ORDER[i]}.png`;face.alt=CH[who].n;face.classList.remove("swap")},120)}
@@ -166,9 +173,22 @@ function render(){
  document.title=(running?Math.ceil(r*100)+"% · ":"")+"하루 표정 타이머";
 }
 function loop(){render();if(running)raf=requestAnimationFrame(loop)}
-function beep(){if(!$("sound").checked||!actx)return;try{[0,.35,.7].forEach(t=>{const o=actx.createOscillator(),g=actx.createGain();o.type="square";o.frequency.value=t===.7?1046:784;g.gain.setValueAtTime(.12,actx.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+t+.3);o.connect(g).connect(actx.destination);o.start(actx.currentTime+t);o.stop(actx.currentTime+t+.3)})}catch(e){}}
+// 종료 알림음 — 모두 Web Audio로 직접 합성
+const SOUNDS={
+ fanfare:[["square",[[523,0,.12],[659,.12,.12],[784,.24,.12],[1046,.36,.45],[784,.84,.12],[1046,.96,.6]]]],
+ levelup:[["square",[[392,0,.08],[523,.08,.08],[659,.16,.08],[784,.24,.08],[1046,.32,.08],[1318,.40,.08],[1568,.48,.5]]]],
+ chime:[["sine",[[659,0,.9],[523,.6,.9],[587,1.2,.9],[392,1.8,1.4]]]],
+ bell:[["triangle",[[1760,0,.9],[1760,.45,.9],[1760,.9,1.2]]],["sine",[[2637,0,.5],[2637,.45,.5],[2637,.9,.7]]]],
+ alarm:[["square",[0,.25,.5,.75,1.2,1.45,1.7,1.95].map(t=>[988,t,.15])]],
+ siren:"siren"
+};
+function tone(type,f,t,d,vol){const o=actx.createOscillator(),g=actx.createGain(),T=actx.currentTime+t;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,T);g.gain.linearRampToValueAtTime(vol,T+.01);g.gain.exponentialRampToValueAtTime(.001,T+d);o.connect(g).connect(actx.destination);o.start(T);o.stop(T+d+.05)}
+function ensureAudio(){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}}
+function beep(){const k=$("sound").value;if(k==="off"||!actx)return;try{
+ if(SOUNDS[k]==="siren"){const o=actx.createOscillator(),g=actx.createGain(),T=actx.currentTime;o.type="sawtooth";for(let i=0;i<=6;i++)o.frequency.linearRampToValueAtTime(i%2?1100:550,T+i*.4);g.gain.setValueAtTime(.08,T);g.gain.setValueAtTime(.08,T+2.3);g.gain.exponentialRampToValueAtTime(.001,T+2.5);o.connect(g).connect(actx.destination);o.start(T);o.stop(T+2.5);return}
+ SOUNDS[k].forEach(([type,notes])=>notes.forEach(([f,t,d])=>tone(type,f,t,d,type==="sine"||type==="triangle"?.2:.1)))}catch(e){}}
 function finish(){elapsed=total;running=false;cancelAnimationFrame(raf);done=true;meter.classList.add("end");go.textContent="시작";show(N-1);beep();render()}
-function start(){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}
+function start(){ensureAudio();
  if(done)reset();if(total<=0)return;running=true;startAt=performance.now();go.textContent="일시정지";loop()}
 function pause(){elapsed=now();running=false;cancelAnimationFrame(raf);go.textContent="계속";render()}
 function reset(){running=false;cancelAnimationFrame(raf);elapsed=0;lastStep=0;done=false;meter.classList.remove("end");go.textContent="시작";show(0);render()}
@@ -178,7 +198,7 @@ $("reset").onclick=reset;
 $("plus").onclick=()=>{if(done){done=false;meter.classList.remove("end");elapsed=total}total+=60000;syncInputs();syncPre();save();render()};
 $("pre").onclick=e=>{const b=e.target.closest("[data-m]");if(b)setTotal(+b.dataset.m*60000)};
 const fromInputs=()=>setTotal(((+$("mins").value||0)*60+Math.min(59,+$("secs").value||0))*1000);
-$("mins").onchange=fromInputs;$("secs").onchange=fromInputs;$("sound").onchange=save;
+$("mins").onchange=fromInputs;$("secs").onchange=fromInputs;$("sound").onchange=save;$("hear").onclick=()=>{ensureAudio();beep()};
 $("full").onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else $("stage").requestFullscreen().catch(()=>{})}catch(e){}};
 document.addEventListener("keydown",e=>{if(e.target.matches("input"))return;if(e.code==="Space"){e.preventDefault();go.click()}else if(e.key==="r"||e.key==="R")reset()});
 document.addEventListener("visibilitychange",()=>{if(running&&!document.hidden)loop()});
