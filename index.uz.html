@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8"><!-- i18n:switcher --><style data-i18n-sw>.i18n-pick{display:inline-flex;align-items:center;gap:4px;margin:0 8px;font:inherit;font-size:13px;white-space:nowrap}.i18n-pick select{font:inherit;font-size:13px;padding:3px 6px;border-radius:8px;border:1px solid var(--rule,rgba(128,128,128,.5));background:var(--panel,Canvas);color:var(--text,CanvasText)}.i18n-pick.float{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:max(8px,env(safe-area-inset-right,0px));z-index:9998}#i18nBanner{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:9999;font:14px/1.3 var(--font,system-ui,sans-serif)}#i18nBanner>button{border-radius:999px;padding:9px 14px;border:1px solid var(--rule,#363a52);background:var(--panel,#1c1e2d);color:var(--text,#eceaf3);box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer;font:inherit}#i18nBanner ul{position:absolute;right:0;bottom:calc(100% + 8px);margin:0;padding:6px;list-style:none;min-width:150px;border-radius:12px;border:1px solid var(--rule,#363a52);background:var(--panel,#1c1e2d);box-shadow:0 8px 24px rgba(0,0,0,.4)}#i18nBanner ul[hidden]{display:none}#i18nBanner a{display:block;padding:7px 10px;border-radius:8px;color:var(--text,#eceaf3);text-decoration:none}#i18nBanner a:hover,#i18nBanner a:focus-visible{background:var(--panel2,#25283a)}#i18nBanner a[aria-current]{color:var(--amber,#f1b646);font-weight:700}@media print{#i18nBanner,.i18n-pick{display:none!important}}</style><script data-i18n-skip>(function(){var C={"langs": [["ko", "한국어"], ["en", "English"], ["zh", "中文"], ["ja", "日本語"], ["uz", "Oʻzbekcha"], ["ru", "Русский"], ["vi", "Tiếng Việt"]], "urls": {"ko": "index.html", "en": "index.en.html", "zh": "index.zh.html", "ja": "index.ja.html", "uz": "index.uz.html", "ru": "index.ru.html", "vi": "index.vi.html"}, "cur": "uz", "auto": true, "key": "haru_timer_lang", "hosts": [["#langSw", "append"], ["nav.top .brand", "after"], ["nav .in", "append"], ["nav", "append"]], "banner": true, "select": true},cur=C.cur,ok={},de=document.documentElement;C.langs.forEach(function(l){ok[l[0]]=1});
+function U(l){return C.urls[l]}
+function save(l){try{localStorage.setItem(C.key,l)}catch(e){}}
+function saved(){try{return localStorage.getItem(C.key)}catch(e){return null}}
+function go(l){location.replace(U(l)+'?lang='+l+location.hash)}
+var shown=function(){de.style.visibility=''};
+function tryGo(l){if(location.protocol==='file:'){go(l);return}
+ de.style.visibility='hidden';var t=setTimeout(shown,2500);
+ try{fetch(U(l),{method:'HEAD',cache:'no-store'}).then(function(r){if(r.ok)go(l);else{clearTimeout(t);shown()}},function(){clearTimeout(t);shown()})}catch(e){clearTimeout(t);shown()}}
+var q=null;try{q=new URLSearchParams(location.search).get('lang')}catch(e){}
+if(q&&ok[q]){save(q);if(q!==cur){tryGo(q);}}
+else if(cur==='ko'&&C.auto){var s=saved(),to=null;
+ if(s&&ok[s]){if(s!=='ko')to=s;}
+ else if(location.protocol!=='file:'){var same=false;try{same=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}
+  if(!same){var nav=(navigator.languages||[navigator.language||'']).map(function(x){return String(x).slice(0,2).toLowerCase()});
+   for(var i=0;i<nav.length;i++){if(nav[i]==='ko')break;if(ok[nav[i]]){to=nav[i];break;}}}}
+ if(to)tryGo(to);}
+function pick(l){save(l);location.href=U(l)+'?lang='+l+location.hash;}
+function name(l){for(var i=0;i<C.langs.length;i++)if(C.langs[i][0]===l)return C.langs[i][1];return l}
+function mount(){if(document.getElementById('i18nSel'))return;
+ if(C.select){var w=document.createElement('span');w.className='i18n-pick';w.innerHTML='<span aria-hidden="true">🌐</span>';
+  var s=document.createElement('select');s.id='i18nSel';s.setAttribute('aria-label','Language');
+  C.langs.forEach(function(l){var o=document.createElement('option');o.value=l[0];o.textContent=l[1];if(l[0]===cur)o.selected=true;s.appendChild(o);});
+  s.addEventListener('change',function(){pick(s.value)});w.appendChild(s);var put=false;
+  for(var i=0;i<C.hosts.length&&!put;i++){var h=document.querySelector(C.hosts[i][0]);if(!h)continue;var m=C.hosts[i][1];
+   if(m==='after')h.insertAdjacentElement('afterend',w);else if(m==='before')h.insertAdjacentElement('beforebegin',w);else h.appendChild(w);put=true;}
+  if(!put){w.classList.add('float');document.body.appendChild(w);}}
+ if(C.banner&&!document.getElementById('i18nBanner')){var b=document.createElement('div');b.id='i18nBanner';
+  var bt=document.createElement('button');bt.type='button';bt.setAttribute('aria-haspopup','true');bt.setAttribute('aria-expanded','false');bt.textContent='🌐 '+name(cur);
+  var ul=document.createElement('ul');ul.hidden=true;ul.setAttribute('role','menu');
+  C.langs.forEach(function(l){var li=document.createElement('li'),a=document.createElement('a');a.href=U(l[0])+'?lang='+l[0];a.textContent=l[1];a.lang=l[0];a.setAttribute('role','menuitem');
+   if(l[0]===cur)a.setAttribute('aria-current','true');a.addEventListener('click',function(e){e.preventDefault();pick(l[0])});li.appendChild(a);ul.appendChild(li);});
+  function close(){ul.hidden=true;bt.setAttribute('aria-expanded','false')}
+  bt.addEventListener('click',function(e){e.stopPropagation();ul.hidden=!ul.hidden;bt.setAttribute('aria-expanded',String(!ul.hidden))});
+  document.addEventListener('click',function(e){if(!b.contains(e.target))close()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){close();bt.focus&&!ul.hidden&&bt.focus()}});
+  b.appendChild(ul);b.appendChild(bt);document.body.appendChild(b);}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();})();</script><!-- /i18n:switcher -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Haru &amp; Intern's TIMER</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 시간이 줄어들수록 하루가 점점 당황하는 장난스러운 타이머
+   IDEA: 비상 전원 계기판 — 배터리 잔량이 남은 시간 비율만큼 꺼져 간다
+   PICTURE: 하루 초상 + 검은 계기판(7세그먼트 숫자, 칸으로 나뉜 배터리)
+   COLOUR and TYPE: 흰 바탕, 남색 테두리, 계기판은 검정 바탕에 주황→빨강 / Noto Sans KR + Press Start 2P
+   LAYOUT: 제목, 초상(좌)+계기판(우, 넓게), 조작부, 라이선스 하단 */
+:root{color-scheme:light dark;
+ --bg:light-dark(#ffffff,#141626);--ink:light-dark(#1b1f3b,#eef0ff);
+ --pink:#e85d9a;--navy:light-dark(#24306b,#9fb0ff);--lav:light-dark(#efe9fd,#272a45);
+ --line:light-dark(#24306b,#6f7bd0);--mut:light-dark(#5a5f80,#a8acc8);
+ --amber:#ff9d1c;--org:#ff6a00;--red:#ff2a2a;--lit:var(--amber)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Sans KR",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:1240px;margin:0 auto;padding:clamp(18px,3vw,40px) max(4vw,14px) 28px}
+h1{font-size:clamp(24px,3.4vw,34px);line-height:1.1;margin:0;font-weight:900}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin:0 0 18px}
+.share{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
+.share input{width:min(100%,360px);font-size:15px;color:var(--mut)}
+.share .ok{font-size:15px;color:var(--pink);font-weight:700;min-width:6em}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.1fr);border:4px solid var(--line);box-shadow:8px 8px 0 var(--line);background:#0b0b0d}
+.port{background:var(--pbg,#cdcdcd);border-right:4px solid var(--line);min-height:340px;display:grid;place-items:center;overflow:hidden;align-self:stretch}
+.port img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;transition:opacity .25s steps(3),transform .25s steps(3)}
+.port img.swap{opacity:0;transform:scale(.96)}
+.meter{--lit:var(--amber);display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,2vw,22px);padding:clamp(16px,2.6vw,30px);color:var(--lit)}
+.meter.w1{--lit:var(--org)}.meter.w2{--lit:var(--red)}
+.hz{height:14px;background:repeating-linear-gradient(-45deg,var(--lit) 0 12px,#0b0b0d 12px 24px);opacity:.9}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font:700 15px "Noto Sans KR";color:var(--lit)}
+.row b{font:400 clamp(16px,2vw,22px) "Press Start 2P",monospace}
+.seg{display:block;width:100%;overflow:hidden;height:clamp(120px,15vw,210px)}
+.seg .on{fill:var(--lit);filter:drop-shadow(0 0 6px var(--lit))}
+.seg .off{fill:var(--lit);opacity:.09}
+.cells{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:4px;height:clamp(54px,7vw,84px);padding:6px;border:3px solid var(--lit)}
+.cells i{background:var(--lit);opacity:.1}
+.cells i.on{opacity:1;box-shadow:0 0 8px var(--lit)}
+.meter.w2 .cells i.on{animation:blink .8s steps(2) infinite}
+.meter.end .seg .on{animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.3}}
+.who{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 18px}
+.who button{display:inline-flex;align-items:center;gap:8px;font:700 16px "Noto Sans KR";min-height:52px;padding:4px 16px 4px 4px;border:3px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;box-shadow:3px 3px 0 var(--line)}
+.who button img{width:40px;height:40px;object-fit:cover;object-position:50% 20%;image-rendering:pixelated;background:#ccc}
+.who button[aria-pressed=true]{background:var(--pink);color:#fff}
+.who button:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+.lic{word-break:keep-all;margin-top:30px;padding-top:16px;border-top:3px dashed var(--line);font-size:14px;line-height:1.7;color:var(--mut);text-align:center}
+.lic p{margin:0 0 6px}
+.lic a{color:var(--navy)}
+.cc{display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border:2px solid var(--ink);border-radius:4px;font:700 12px/1.4 system-ui,sans-serif;color:var(--ink)!important;text-decoration:none;vertical-align:1px;margin-right:6px}
+.cc span{background:var(--ink);color:var(--bg);border-radius:2px;padding:0 4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+.btn{font:700 16px "Noto Sans KR";min-height:46px;padding:0 18px;border:3px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;box-shadow:4px 4px 0 var(--line)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--line)}
+.btn.main{background:var(--pink);color:#fff;min-width:120px}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+.pre{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;align-items:center}
+.pre .btn{min-height:44px;font-size:15px;padding:0 12px;box-shadow:3px 3px 0 var(--line)}
+.pre .btn[aria-pressed=true]{background:var(--lav)}
+label{font-size:15px;color:var(--mut);display:inline-flex;align-items:center;gap:6px}
+input,select{font:16px "Noto Sans KR";min-height:44px;border:3px solid var(--line);background:var(--bg);color:var(--ink);padding:0 8px}
+input[type=number]{width:84px}
+.opts{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px}
+.stage:fullscreen{height:100vh;border:0;box-shadow:none;align-content:center}
+@media(max-width:760px){.stage{grid-template-columns:1fr}.port{border-right:0;border-bottom:4px solid var(--line);aspect-ratio:auto;height:min(88vw,56vh)}.cells{grid-template-columns:repeat(10,minmax(0,1fr));height:auto;grid-auto-rows:28px}}
+@media(prefers-reduced-motion:reduce){.port img{transition:none}.meter .cells i.on,.meter.end .seg .on{animation:none}}
+</style>
+<link rel="alternate" hreflang="ko" href="index.html"><link rel="alternate" hreflang="en" href="index.en.html"><link rel="alternate" hreflang="zh-CN" href="index.zh.html"><link rel="alternate" hreflang="ja" href="index.ja.html"><link rel="alternate" hreflang="uz" href="index.uz.html"><link rel="alternate" hreflang="ru" href="index.ru.html"><link rel="alternate" hreflang="vi" href="index.vi.html"><link rel="alternate" hreflang="x-default" href="index.html"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap"><style data-i18n-font>body,button,input,select,textarea{font-family:"IBM Plex Sans",system-ui,sans-serif}</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="top"><h1>Haru &amp; Intern's TIMER</h1><span id="langSw"></span></div>
+ <div class="who" role="group" aria-label="Qahramonni tanlang">
+  <button data-c="haru" aria-pressed="true"><img src="img/haru/E01_joy.png" alt="">Haru</button>
+  <button data-c="sia" aria-pressed="false"><img src="img/sia/E01_joy.png" alt="">Sia</button>
+  <button data-c="moa" aria-pressed="false"><img src="img/moa/E01_joy.png" alt="">Moa</button>
+ </div>
+
+ <section class="stage" id="stage">
+  <div class="port"><img id="face" src="img/haru/E01_joy.png" alt="Haru"></div>
+  <div class="meter" id="meter">
+   <div class="hz" aria-hidden="true"></div>
+   <div class="row"><span>Qolgan vaqt</span><span>Quvvat <b id="pct">100%</b></span></div>
+   <svg class="seg" id="seg" role="img" aria-label="Qolgan vaqt"></svg>
+   <div class="cells" id="cells" aria-hidden="true"></div>
+   <div class="hz" aria-hidden="true"></div>
+  </div>
+ </section>
+
+ <div class="ctrl">
+  <button class="btn main" id="go">Boshlash</button>
+  <button class="btn" id="reset">Qayta boshlash</button>
+  <button class="btn" id="plus">+1 daq</button>
+  <button class="btn" id="full">Toʻliq ekran</button>
+ </div>
+
+ <div class="pre" id="pre" aria-label="Tez tanlash"></div>
+
+ <div class="opts">
+  <label>Qoʻlda kiritish <input type="number" id="mins" min="0" max="999" value="5"> daq <input type="number" id="secs" min="0" max="59" value="0"> soniya</label>
+  <label>Tugash signali <select id="sound">
+   <option value="fanfare">Piksel fanfarasi</option>
+   <option value="levelup">Yangi daraja</option>
+   <option value="chime">Maktab qoʻngʻirogʻi</option>
+   <option value="bell">Stol qoʻngʻirogʻi</option>
+   <option value="alarm">Pip-pip budilnik</option>
+   <option value="siren">Sirena</option>
+   <option value="off">Oʻchiq</option>
+  </select></label>
+  <button class="btn" id="hear" type="button">Tinglab koʻrish</button>
+ </div>
+
+ <div class="share">
+  <button class="btn" id="copy" type="button">Taymer havolasini nusxalash</button>
+  <input id="url" type="text" readonly value="https://adminmrobo.github.io/timer_ver001/" aria-label="Taymer havolasi">
+  <span class="ok" id="copied" aria-live="polite"></span>
+ </div>
+
+ <footer class="lic">
+  <p><a class="cc" href="https://creativecommons.org/licenses/by-nc/4.0/deed.en"><span>cc</span>BY-NC</a>Ushbu asar <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.en">Creative Commons Atribusiya-Notijorat 4.0 Xalqaro litsenziyasi (CC BY-NC 4.0)</a> asosida eʼlon qilingan. Uni faqat notijorat maqsadlarda erkin ulashishingiz va oʻzgartirishingiz mumkin, lekin manbani albatta koʻrsating. Manba koʻrsatish namunasi: Ahn Sangsun, “Reon Ahn's page”, <a href="https://ahnboat.xyz/">ahnboat.xyz</a>.</p>
+  <p>Reon Ahn's Page © 2022 Reon Ahn. All rights reserved.</p>
+  <p>Qahramon rasmlari: <a href="https://adminmrobo.github.io/fruitfly-lab-expressions/">Meva pashshasi laboratoriyasi ifodalar kutubxonasi</a> · Tugmalar: Space boshlash/toʻxtatish, R qayta boshlash</p>
+ </footer>
+</div>
+
+<script>
+{
+// 표정 29장 전부 — 여유(앞) → 당황(뒤) 순서
+const ORDER=["E01_joy","E19_sparkle_eyes","E12_cheering","E16_proud","E25_teehee","E25_teehee_playful","E25_teehee_shy","E13_neutral","E07_explaining","E08_guiding","E10_confirming","E09_thinking","E17_sleepy","E23_blank_dot_eyes","E14_sheepish","E18_sulking","E26_hmph","E26_hmph_walkaway","E06_disgust","E02_sadness","E11_apologizing","E04_surprise","E20_sweat_drop","E05_fear","E22_puffed_angry","E03_anger","E21_waterfall_tears","E15_flustered","E24_shock"];
+const N=ORDER.length,STEP=30000,PRESETS=[1,3,5,10,15,25,30,50,60];
+const $=id=>document.getElementById(id);
+const face=$("face"),seg=$("seg"),cellsEl=$("cells"),meter=$("meter"),pct=$("pct"),go=$("go");
+const CH={haru:{n:"Haru",bg:"#cdcdcd"},sia:{n:"Sia",bg:"#b2b2b5"},moa:{n:"Moa",bg:"#c8c7ca"}};
+let who="haru";
+const preload=c=>ORDER.forEach(f=>{const i=new Image();i.src=`img/${c}/${f}.png`});
+cellsEl.innerHTML="<i></i>".repeat(20);
+const cells=[...cellsEl.children];
+
+// 7세그먼트 숫자
+const H=y=>`10,${y} 15,${y-5} 45,${y-5} 50,${y} 45,${y+5} 15,${y+5}`;
+const V=(x,a,b)=>`${x},${a} ${x+5},${a+5} ${x+5},${b-5} ${x},${b} ${x-5},${b-5} ${x-5},${a+5}`;
+const SEG={a:H(7),b:V(53,10,49),c:V(53,51,90),d:H(93),e:V(7,51,90),f:V(7,10,49),g:H(50)};
+const MAP=["abcdef","bc","abdeg","abcdg","bcfg","acdfg","acdefg","abc","abcdefg","abcdfg"];
+const digit=(d,x,s)=>`<g transform="translate(${x},${s<1?40:0}) scale(${s}) skewX(-6)">`+Object.keys(SEG).map(k=>`<polygon points="${SEG[k]}" class="${MAP[d].includes(k)?"on":"off"}"/>`).join("")+"</g>";
+const colon=x=>`<g transform="translate(${x},0)"><rect x="0" y="26" width="10" height="10" class="on"/><rect x="0" y="64" width="10" height="10" class="on"/></g>`;
+function drawClock(ms){
+ const cs=Math.max(0,Math.ceil(ms/10)),m=Math.floor(cs/6000),s=Math.floor(cs/100)%60,c=cs%100;
+ const mm=String(m).padStart(2,"0").split("").map(Number);
+ let x=0,out="";
+ mm.forEach(d=>{out+=digit(d,x,1);x+=80});out+=colon(x-4);x+=24;
+ [Math.floor(s/10),s%10].forEach(d=>{out+=digit(d,x,1);x+=80});out+=colon(x-4);x+=24;
+ [Math.floor(c/10),c%10].forEach(d=>{out+=digit(d,x,.6);x+=48});
+ seg.setAttribute("viewBox",`-12 -4 ${x+14} 108`);seg.innerHTML=out;
+}
+
+let total=300000,elapsed=0,startAt=0,running=false,raf=0,cur=-1,lastStep=0,done=false,actx=null;
+try{const s=JSON.parse(localStorage.getItem("haruTimer2")||"{}");if(s.total>=0)total=s.total;if(s.sound&&typeof s.sound==="string")$("sound").value=s.sound;if(CH[s.who])who=s.who}catch(e){}
+const save=()=>{try{localStorage.setItem("haruTimer2",JSON.stringify({total,sound:$("sound").value,who}))}catch(e){}};
+$("pre").innerHTML='<span style="font-size:15px;color:var(--mut)">Tez tanlash</span>'+PRESETS.map(m=>`<button class="btn" data-m="${m}" aria-pressed="false">${m} daq</button>`).join("");
+
+function show(i){if(i===cur)return;cur=i;face.classList.add("swap");setTimeout(()=>{face.src=`img/${who}/${ORDER[i]}.png`;face.alt=CH[who].n;face.classList.remove("swap")},120)}
+// 30초마다: 지나간 시간 비율(=1-남은 시간 비율)로 표정 위치를 정한다.
+// 같은 자리가 이어지면 바로 다음 표정과 번갈아 보여 30초마다 반드시 바뀌게 한다. 마지막(충격)은 종료 때.
+function faceForStep(e){
+ const used=Math.min(1,e/Math.max(total,1)),base=Math.min(N-2,Math.floor(used*(N-1)));
+ if(base!==cur)return base;
+ return base+1<=N-2?base+1:Math.max(0,base-1);
+}
+const now=()=>elapsed+(running?performance.now()-startAt:0);
+const syncPre=()=>document.querySelectorAll("#pre .btn").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.m*60000===total)));
+const syncInputs=()=>{$("mins").value=Math.floor(total/60000);$("secs").value=Math.floor(total%60000/1000)};
+function render(){
+ const e=now(),left=Math.max(0,total-e),r=total>0?left/total:0;
+ drawClock(left);
+ pct.textContent=Math.ceil(r*100)+"%";
+ const lit=Math.ceil(r*20);cells.forEach((c,i)=>c.classList.toggle("on",i<lit));
+ meter.classList.toggle("w1",r<=.5&&r>.2);meter.classList.toggle("w2",r<=.2);
+ const st=Math.floor(e/STEP);if(running&&st>lastStep){lastStep=st;show(faceForStep(e))}
+ if(running&&e>=total)finish();
+ document.title=(running?Math.ceil(r*100)+"% · ":"")+"Haru & Intern's TIMER";
+}
+function loop(){render();if(running)raf=requestAnimationFrame(loop)}
+// 종료 알림음 — 모두 Web Audio로 직접 합성
+const SOUNDS={
+ fanfare:[["square",[[523,0,.12],[659,.12,.12],[784,.24,.12],[1046,.36,.45],[784,.84,.12],[1046,.96,.6]]]],
+ levelup:[["square",[[392,0,.08],[523,.08,.08],[659,.16,.08],[784,.24,.08],[1046,.32,.08],[1318,.40,.08],[1568,.48,.5]]]],
+ chime:[["sine",[[659,0,.9],[523,.6,.9],[587,1.2,.9],[392,1.8,1.4]]]],
+ bell:[["triangle",[[1760,0,.9],[1760,.45,.9],[1760,.9,1.2]]],["sine",[[2637,0,.5],[2637,.45,.5],[2637,.9,.7]]]],
+ alarm:[["square",[0,.25,.5,.75,1.2,1.45,1.7,1.95].map(t=>[988,t,.15])]],
+ siren:"siren"
+};
+function tone(type,f,t,d,vol){const o=actx.createOscillator(),g=actx.createGain(),T=actx.currentTime+t;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,T);g.gain.linearRampToValueAtTime(vol,T+.01);g.gain.exponentialRampToValueAtTime(.001,T+d);o.connect(g).connect(actx.destination);o.start(T);o.stop(T+d+.05)}
+function ensureAudio(){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}}
+function beep(){const k=$("sound").value;if(k==="off"||!actx)return;try{
+ if(SOUNDS[k]==="siren"){const o=actx.createOscillator(),g=actx.createGain(),T=actx.currentTime;o.type="sawtooth";for(let i=0;i<=6;i++)o.frequency.linearRampToValueAtTime(i%2?1100:550,T+i*.4);g.gain.setValueAtTime(.08,T);g.gain.setValueAtTime(.08,T+2.3);g.gain.exponentialRampToValueAtTime(.001,T+2.5);o.connect(g).connect(actx.destination);o.start(T);o.stop(T+2.5);return}
+ SOUNDS[k].forEach(([type,notes])=>notes.forEach(([f,t,d])=>tone(type,f,t,d,type==="sine"||type==="triangle"?.2:.1)))}catch(e){}}
+function finish(){elapsed=total;running=false;cancelAnimationFrame(raf);done=true;meter.classList.add("end");go.textContent="Boshlash";show(N-1);beep();render()}
+function start(){ensureAudio();
+ if(done)reset();if(total<=0)return;running=true;startAt=performance.now();go.textContent="Pauza";loop()}
+function pause(){elapsed=now();running=false;cancelAnimationFrame(raf);go.textContent="Davom etish";render()}
+function reset(){running=false;cancelAnimationFrame(raf);elapsed=0;lastStep=0;done=false;meter.classList.remove("end");go.textContent="Boshlash";show(0);render()}
+function setTotal(ms){total=Math.max(0,Math.min(ms,999*60000+59000));syncInputs();syncPre();save();if(!running)reset();else render()}
+go.onclick=()=>running?pause():start();
+$("reset").onclick=reset;
+$("plus").onclick=()=>{if(done){done=false;meter.classList.remove("end");elapsed=total}total+=60000;syncInputs();syncPre();save();render()};
+$("pre").onclick=e=>{const b=e.target.closest("[data-m]");if(b)setTotal(+b.dataset.m*60000)};
+const fromInputs=()=>setTotal(((+$("mins").value||0)*60+Math.min(59,+$("secs").value||0))*1000);
+$("mins").onchange=fromInputs;$("secs").onchange=fromInputs;$("sound").onchange=save;$("copy").onclick=async()=>{const u=$("url").value,ok=$("copied");try{await navigator.clipboard.writeText(u);ok.textContent="Nusxalandi!"}catch(e){$("url").select();ok.textContent="Havola belgilandi. Nusxalash uchun Ctrl+C ni bosing."}setTimeout(()=>ok.textContent="",3000)};
+$("url").onfocus=e=>e.target.select();
+$("hear").onclick=()=>{ensureAudio();beep()};
+$("full").onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else $("stage").requestFullscreen().catch(()=>{})}catch(e){}};
+document.addEventListener("keydown",e=>{if(e.target.matches("input"))return;if(e.code==="Space"){e.preventDefault();go.click()}else if(e.key==="r"||e.key==="R")reset()});
+document.addEventListener("visibilitychange",()=>{if(running&&!document.hidden)loop()});
+setInterval(()=>{if(running&&document.hidden)render()},1000);
+function setWho(c){who=c;document.querySelectorAll(".who button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.c===c)));document.querySelector(".port").style.setProperty("--pbg",CH[c].bg);preload(c);const k=cur;cur=-1;show(Math.max(0,k));save()}
+document.querySelector(".who").onclick=e=>{const b=e.target.closest("[data-c]");if(b)setWho(b.dataset.c)};
+setWho(who);syncInputs();syncPre();reset();
+}
+</script>
+</body>
+</html>
