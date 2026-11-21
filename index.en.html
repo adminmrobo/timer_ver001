@@ -61,6 +61,7 @@ h1{font-size:clamp(24px,3.4vw,34px);line-height:1.1;margin:0;font-weight:900}
 .top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin:0 0 18px}
 .share{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
 .share input{width:min(100%,360px);font-size:15px;color:var(--mut)}
+.share .taken{flex-basis:100%;margin:2px 0 0;font-size:14px;color:var(--mut)}
 .share .ok{font-size:15px;color:var(--pink);font-weight:700;min-width:6em}
 .stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.1fr);border:4px solid var(--line);box-shadow:8px 8px 0 var(--line);background:#0b0b0d}
 .port{background:var(--pbg,#cdcdcd);border-right:4px solid var(--line);min-height:340px;display:grid;place-items:center;overflow:hidden;align-self:stretch}
@@ -155,6 +156,7 @@ input[type=number]{width:84px}
   <button class="btn" id="copy" type="button">Copy timer link</button>
   <input id="url" type="text" readonly value="https://adminmrobo.github.io/timer_ver001/" aria-label="Timer link">
   <span class="ok" id="copied" aria-live="polite"></span>
+  <p class="taken" id="taken" hidden></p>
  </div>
 
  <footer class="lic">
@@ -257,6 +259,19 @@ function setWho(c){who=c;document.querySelectorAll(".who button").forEach(b=>b.s
 document.querySelector(".who").onclick=e=>{const b=e.target.closest("[data-c]");if(b)setWho(b.dataset.c)};
 setWho(who);syncInputs();syncPre();reset();
 }
+</script>
+<script>
+// 가져가신 분 카운터 — 이 브라우저에서 처음 열 때 한 번만 +1 (Abacus 무료 카운터)
+(function(){
+ var API="https://abacus.jasoncameron.dev",PATH="/ahnboat.xyz/timer-taken",FLAG="ahb_timer_taken",SHOW_FROM=10;
+ var el=document.getElementById("taken");if(!el)return;
+ function show(d){var n=d&&+d.value;if(!(n>=SHOW_FROM))return;el.textContent='{n} people have taken Haru & the interns home so far!'.replace("{n}",n.toLocaleString("en-US"));el.hidden=false}
+ var counted=false;try{counted=localStorage.getItem(FLAG)==="1"}catch(e){}
+ var inFrame=false;try{inFrame=window.self!==window.top}catch(e){inFrame=true}
+ var hit=!counted&&!inFrame;
+ if(hit){try{localStorage.setItem(FLAG,"1")}catch(e){}}
+ fetch(API+(hit?"/hit":"/get")+PATH).then(function(r){return r.ok?r.json():null}).then(show).catch(function(){});
+})();
 </script>
 </body>
 </html>
